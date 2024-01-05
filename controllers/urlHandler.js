@@ -16,7 +16,6 @@ exports.url_get_controller = [
 
   async (req, res, next) => {
     const id = req.params.id;
-
     const client = new Client({
       user: process.env.PGUSER,
       password: process.env.PGPASS,
@@ -24,6 +23,7 @@ exports.url_get_controller = [
       database: process.env.PGDATABASE,
       port: process.env.PGPORT,
     });
+
     try {
       await client.connect();
       console.log("Database connected");
@@ -31,7 +31,10 @@ exports.url_get_controller = [
         "SELECT * FROM public.url WHERE id=$1",
         [id]
       );
-      result.rows.length > 0 && res.redirect(result.rows[0].url);
+      if (result.rows.length > 0) {
+        res.redirect(result.rows[0].url);
+        return;
+      }
       next(new Error("No short URL found for the given input"));
     } catch (err) {
       next(err);
@@ -60,7 +63,6 @@ exports.url_post_controller = [
 
   async (req, res, next) => {
     const url = req.body.url;
-
     const client = new Client({
       user: process.env.PGUSER,
       password: process.env.PGPASS,
@@ -68,6 +70,7 @@ exports.url_post_controller = [
       database: process.env.PGDATABASE,
       port: process.env.PGPORT,
     });
+
     try {
       await client.connect();
       console.log("Database connected");
