@@ -7,9 +7,10 @@ exports.url_get_controller = [
   param("id", "Invalid input").matches(/^\d+$/),
 
   (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty) {
-      next(new Error("Invalid format"));
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      const errors = result.array();
+      next(new Error(errors[0].msg));
     }
     next();
   },
@@ -46,7 +47,7 @@ exports.url_get_controller = [
 ];
 
 exports.url_post_controller = [
-  body("url").isURL({
+  body("url", "Invalid URL format").isURL({
     protocols: ["http", "https"],
     require_protocol: true,
     require_valid_protocol: true,
@@ -54,9 +55,10 @@ exports.url_post_controller = [
   }),
 
   (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      next(new Error("Invalid URL format"));
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      const errors = result.array();
+      next(new Error(errors[0].msg));
     }
     next();
   },
