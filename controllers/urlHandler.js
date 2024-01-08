@@ -47,7 +47,7 @@ exports.url_get_controller = [
 ];
 
 exports.url_post_controller = [
-  body("url", "Invalid URL format").isURL({
+  body("url", "invalid url").isURL({
     protocols: ["http", "https"],
     require_protocol: true,
     require_valid_protocol: true,
